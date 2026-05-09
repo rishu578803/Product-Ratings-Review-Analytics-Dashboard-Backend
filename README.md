@@ -23,7 +23,7 @@ A RESTful backend API built with **Node.js**, **Express.js**, and **PostgreSQL**
 - Node.js
 - Express.js
 - PostgreSQL
-- Sequelize / pg (if used)
+- Sequelize
 - Multer (file upload)
 - CSV / XLSX Parser
 - dotenv
@@ -34,7 +34,7 @@ A RESTful backend API built with **Node.js**, **Express.js**, and **PostgreSQL**
 
 ### Clone Repository
 
-git clone https://github.com/yourusername/product-analytics-backend.git
+git clone https://github.com/rishu578803/Product-Ratings-Review-Analytics-Dashboard-Backend
 
 cd product-analytics-backend
 
