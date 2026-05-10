@@ -93,7 +93,7 @@ export const importProductData = async (data) => {
 
 
 
-export const fetchProducts = async ({ page, limit }) => {
+export const fetchProductss = async ({ page, limit }) => {
   const offset = (page - 1) * limit;
 
   const result = await getAllProducts({ limit, offset });
@@ -138,4 +138,35 @@ export const getProductStats = async () => {
     avgDiscount: Math.round((aggregates?.avgDiscount || 0) * 100), 
     categoriesCount: distinctCategories.length,
   };
+};
+
+
+
+
+export const fetchProducts = async ({ page, limit, filters = {} }) => {
+  const where = {};
+
+  if (filters.search) {
+    where.product_name = { [Op.iLike]: `%${filters.search}%` }; // use Op.like for MySQL
+  }
+
+  if (filters.category) {
+    where.category = { [Op.iLike]: `%${filters.category}%` };
+  }
+
+  if (filters.ratingMin !== undefined || filters.ratingMax !== undefined) {
+    where.rating = {
+      ...(filters.ratingMin !== undefined && { [Op.gte]: filters.ratingMin }),
+      ...(filters.ratingMax !== undefined && { [Op.lte]: filters.ratingMax }),
+    };
+  }
+
+  const { count: total, rows } = await Product.findAndCountAll({
+    where,
+    offset: (page - 1) * limit,
+    limit,
+    order: [["product_id", "ASC"]],
+  });
+
+  return { total, rows };
 };
