@@ -116,7 +116,14 @@ export const getUploadHistory = async (req, res, next) => {
 };
 export const getProducts = async (req, res, next) => {
   try {
-    let { page = 1, limit = 10, search, category, rating_min, rating_max } = req.query;
+    let {
+      page = 1,
+      limit = 10,
+      search,
+      category,
+      rating_min,
+      rating_max,
+    } = req.query;
 
     page = parseInt(page);
     limit = parseInt(limit);
@@ -124,43 +131,14 @@ export const getProducts = async (req, res, next) => {
     if (page < 1) page = 1;
     if (limit < 1 || limit > 100) limit = 10;
 
-    // Build filters object — only include fields that were actually provided
     const filters = {
-      ...(search     && { search:     search.trim() }),
-      ...(category   && { category:   category.trim() }),
-      ...(rating_min && { ratingMin:  parseFloat(rating_min) }),
-      ...(rating_max && { ratingMax:  parseFloat(rating_max) }),
+      ...(search && { search: search.trim() }),
+      ...(category && { category: category.trim() }),
+      ...(rating_min && { ratingMin: parseFloat(rating_min) }),
+      ...(rating_max && { ratingMax: parseFloat(rating_max) }),
     };
 
     const { total, rows } = await fetchProducts({ page, limit, filters });
-
-    const totalPages = Math.ceil(total / limit);
-
-    return res.status(200).json({
-      success: true,
-      pagination: {
-        totalRecords: total,
-        currentPage: page,
-        totalPages,
-        limit,
-      },
-      data: rows,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-export const getProductss = async (req, res, next) => {
-  try {
-    let { page = 1, limit = 10 } = req.query;
-
-    page = parseInt(page);
-    limit = parseInt(limit);
-
-    if (page < 1) page = 1;
-    if (limit < 1 || limit > 100) limit = 10;
-
-    const { total, rows } = await fetchProducts({ page, limit });
 
     const totalPages = Math.ceil(total / limit);
 

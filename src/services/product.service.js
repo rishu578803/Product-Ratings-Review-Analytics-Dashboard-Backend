@@ -55,7 +55,7 @@ const chunkArray = (array, size) => {
   return result;
 };
 //=========================================
-const CHUNK_SIZE = 500; 
+const CHUNK_SIZE = 500;
 
 export const importProductData = async (data) => {
   const normalized = normalizeData(data);
@@ -63,23 +63,18 @@ export const importProductData = async (data) => {
   const transaction = await sequelize.transaction();
 
   try {
-
     const chunks = chunkArray(normalized, CHUNK_SIZE);
 
     let totalInserted = 0;
 
-
     for (const chunk of chunks) {
-  
       const validatedChunk = await validateProducts(chunk);
 
-    
       await bulkInsertProducts(validatedChunk, transaction);
 
       totalInserted += validatedChunk.length;
     }
 
-  
     await transaction.commit();
 
     return {
@@ -91,25 +86,10 @@ export const importProductData = async (data) => {
   }
 };
 
-
-
-export const fetchProductss = async ({ page, limit }) => {
-  const offset = (page - 1) * limit;
-
-  const result = await getAllProducts({ limit, offset });
-
-  return {
-    total: result.count,
-    rows: result.rows,
-  };
-};
-
 export const getProductStats = async () => {
   const [totalProducts, aggregates, distinctCategories] = await Promise.all([
-  
     Product.count(),
 
-  
     Product.findOne({
       attributes: [
         [fn("SUM", col("rating_count")), "totalReviews"],
@@ -118,7 +98,6 @@ export const getProductStats = async () => {
       ],
       raw: true,
     }),
-
 
     Product.findAll({
       attributes: [
@@ -135,19 +114,16 @@ export const getProductStats = async () => {
     totalProducts,
     totalReviews: parseInt(aggregates?.totalReviews || 0),
     averageRating: parseFloat((aggregates?.averageRating || 0).toFixed(2)),
-    avgDiscount: Math.round((aggregates?.avgDiscount || 0) * 100), 
+    avgDiscount: Math.round((aggregates?.avgDiscount || 0) * 100),
     categoriesCount: distinctCategories.length,
   };
 };
-
-
-
 
 export const fetchProducts = async ({ page, limit, filters = {} }) => {
   const where = {};
 
   if (filters.search) {
-    where.product_name = { [Op.iLike]: `%${filters.search}%` }; // use Op.like for MySQL
+    where.product_name = { [Op.iLike]: `%${filters.search}%` };
   }
 
   if (filters.category) {
